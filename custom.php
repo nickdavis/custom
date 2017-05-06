@@ -12,7 +12,58 @@
 
 namespace NickDavis\Custom;
 
-define( 'ND_CUSTOM_LIBRARY', __FILE__ );
-define( 'ND_CUSTOM_DIR', trailingslashit(__DIR__ ) );
+/**
+ * Checks if package is already loaded and bails, if so.
+ *
+ * @since 1.0.0
+ */
+if ( defined( 'ND_CUSTOM_LOADED' ) ) {
+	return;
+}
 
-include __DIR__ . '/includes/module.php';
+/**
+ * Sets up the packages's constants.
+ *
+ * @since 1.0.0
+ *
+ * @return void
+ */
+function init_constants() {
+	$package_url = plugin_dir_url( __FILE__ );
+	if ( is_ssl() ) {
+		$package_url = str_replace( 'http://', 'https://', $package_url );
+	}
+
+	define( 'ND_CUSTOM_LOADED', true );
+	define( 'ND_CUSTOM_VERSION', '1.0.0' );
+	define( 'ND_CUSTOM_DIR', trailingslashit( plugin_dir_path( __FILE__ ) ) );
+	define( 'ND_CUSTOM_URL', $package_url );
+	define( 'ND_CUSTOM_FILE', __FILE__ );
+}
+
+/**
+ * Kicks off the package by initializing the package files.
+ *
+ * @since 1.0.0
+ *
+ * @return void
+ */
+function init_autoloader() {
+	require_once( 'includes/autoload.php' );
+
+	autoload();
+}
+
+/**
+ * Launches the package.
+ *
+ * @since 1.0.0
+ *
+ * @return void
+ */
+function launch() {
+	init_autoloader();
+}
+
+init_constants();
+launch();
